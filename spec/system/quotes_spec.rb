@@ -1,0 +1,56 @@
+require "rails_helper"
+
+RSpec.feature "Quote Editor", type: :system, js: true do
+  let!(:quote_1) { quotes(:first) }
+
+  scenario "Creating a new quote", skip: true do
+    # When we visit the Quotes#index page
+    # we expect to see a title with the text "Quotes"
+    visit quotes_path
+    expect(page).to have_selector('h1', text: "Quotes")
+
+    # When we click on the link with the text "New quote"
+    # we expect to land on a page with the title "New quote"
+    click_on "New quote"
+    expect(page).to have_selector('h1', text: "New Quote")
+
+    # When we fill in the name input with "Capybara quote"
+    # and we click on "Create Quote"
+    fill_in "Name", with: "Capybara quote"
+    click_on "Create quote"
+
+    # We expect to be back on the page with the title "Quotes"
+    # and to see our "Capybara quote" added to the list
+    assert_selector "h1", text: "Quotes"
+    expect(page).to have_text("Capybara quote")
+  end
+
+  scenario "Showing a quote", skip: true do
+    visit quotes_path
+    click_link @quote.name
+
+    expect(page).to have_selector("h1", text: @quote.name)
+  end
+
+  scenario "Updating a quote", skip: true do
+    visit quotes_path
+    expect(page).to have_selector("h1", text: "Quotes")
+
+    click_on "Edit", match: :first
+    expect(page).to have_selector("h1", text: "Edit quote")
+
+    fill_in "Name", with: "Updated quote"
+    click_on "Update quote"
+
+    expect(page).to have_selector("h1", text: "Quotes")
+    expect(page).to have_text("Updated quote")
+  end
+
+  scenario "Destroying a quote", skip: true do
+    visit quotes_path
+    expect(page).to have_text(@quote.name)
+
+    click_on "Delete", match: :first
+    expect(page).to have_no_text(@quote.name)
+  end
+end
