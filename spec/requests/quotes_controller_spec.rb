@@ -31,6 +31,12 @@ RSpec.describe "Quotes", type: :request do
 
       expect(response).to be_successful
     end
+
+    it "renders the submit input" do
+      do_request
+
+      expect(page).to have_selector("input", class: "btn btn--secondary")
+    end
   end
 
   describe "GET #edit /quote/:id/edit" do
@@ -42,6 +48,12 @@ RSpec.describe "Quotes", type: :request do
       do_request
 
       expect(response).to be_successful
+    end
+
+    it "renders the submit input" do
+      do_request
+
+      expect(page).to have_selector("input", class: "btn btn--secondary")
     end
   end
 end
