@@ -20,4 +20,28 @@ RSpec.describe "Quotes", type: :request do
       expect(page).to have_text(quote1.name)
     end
   end
+
+  describe "GET #new /quotes/new" do
+    def do_request(url: "/quotes/new", params: {})
+      get url, params: params
+    end
+
+    it "renders" do
+      do_request
+
+      expect(response).to be_successful
+    end
+  end
+
+  describe "GET #edit /quote/:id/edit" do
+    def do_request(url: "/quotes/new", params: {})
+      get url, params: params
+    end
+
+    it "renders" do
+      do_request
+
+      expect(response).to be_successful
+    end
+  end
 end
