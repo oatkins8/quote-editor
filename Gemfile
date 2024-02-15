@@ -72,4 +72,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "cuprite"
+  gem "shoulda-matchers"
 end
