@@ -1,5 +1,5 @@
 class QuotesController < ApplicationController
-  before_action :set_quote, only: %i[edit]
+  before_action :set_quote, only: %i[edit show destroy update]
 
   def index
     @quotes = Quote.all
@@ -9,7 +9,33 @@ class QuotesController < ApplicationController
     @quote = Quote.new
   end
 
+  def create
+    @quote = Quote.new(quote_params)
+
+    if @quote.save
+      redirect_to quotes_path, notice: "Quote was successfully created."
+    else
+      render :new
+    end
+  end
+
+  def show
+  end
+
   def edit
+  end
+
+  def update
+    if @quote.update(quote_params)
+      redirect_to quotes_path, notice: "Quote was successfully updated."
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    @quote.destroy
+    redirect_to quotes_path, notice: "Quote was successfully destroyed"
   end
 
   private
