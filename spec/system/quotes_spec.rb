@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.feature "Quote Editor", type: :system, js: true do
-  let!(:quote_1) { quotes(:first) }
+  let!(:quote) { quotes(:first) }
 
-  scenario "Creating a new quote", skip: true do
+  scenario "Creating a new quote" do
     # When we visit the Quotes#index page
     # we expect to see a title with the text "Quotes"
     visit quotes_path
@@ -12,7 +12,7 @@ RSpec.feature "Quote Editor", type: :system, js: true do
     # When we click on the link with the text "New quote"
     # we expect to land on a page with the title "New quote"
     click_on "New quote"
-    expect(page).to have_selector('h1', text: "New Quote")
+    expect(page).to have_selector('h1', text: "New quote")
 
     # When we fill in the name input with "Capybara quote"
     # and we click on "Create Quote"
@@ -25,14 +25,14 @@ RSpec.feature "Quote Editor", type: :system, js: true do
     expect(page).to have_text("Capybara quote")
   end
 
-  scenario "Showing a quote", skip: true do
+  scenario "Showing a quote" do
     visit quotes_path
-    click_link @quote.name
+    click_link quote.name
 
-    expect(page).to have_selector("h1", text: @quote.name)
+    expect(page).to have_selector("h1", text: quote.name)
   end
 
-  scenario "Updating a quote", skip: true do
+  scenario "Updating a quote" do
     visit quotes_path
     expect(page).to have_selector("h1", text: "Quotes")
 
@@ -46,11 +46,11 @@ RSpec.feature "Quote Editor", type: :system, js: true do
     expect(page).to have_text("Updated quote")
   end
 
-  scenario "Destroying a quote", skip: true do
+  scenario "Destroying a quote" do
     visit quotes_path
-    expect(page).to have_text(@quote.name)
+    expect(page).to have_text(quote.name)
 
     click_on "Delete", match: :first
-    expect(page).to have_no_text(@quote.name)
+    expect(page).to have_no_text(quote.name)
   end
 end
