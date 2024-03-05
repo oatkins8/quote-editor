@@ -139,6 +139,8 @@ GEM
     nio4r (2.7.0)
     nokogiri (1.16.2-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.16.2-x86_64-linux)
+      racc (~> 1.4)
     pg (1.5.4)
     psych (5.1.2)
       stringio
@@ -208,6 +210,11 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    shoulda-matchers (6.1.0)
+      activesupport (>= 5.2.0)
+    simple_form (5.3.0)
+      actionpack (>= 5.2)
+      activemodel (>= 5.2)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -258,6 +265,8 @@ DEPENDENCIES
   redis (~> 4.0)
   rspec-rails
   selenium-webdriver
+  shoulda-matchers
+  simple_form
   sprockets-rails
   stimulus-rails
   turbo-rails (~> 1.0)
