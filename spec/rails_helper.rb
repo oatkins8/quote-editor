@@ -34,6 +34,11 @@ RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.global_fixtures = :all
 
+  # prevent system tests opening a browser in chrome
+  config.before :all, type: :system do
+    driven_by(:headless_cuprite)
+  end
+
   # config.include ActiveJob::TestHelper
   # config.include ActionMailbox::TestHelper
   # config.include Devise::Test::IntegrationHelpers, type: :feature
