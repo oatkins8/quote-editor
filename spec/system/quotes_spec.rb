@@ -1,56 +1,70 @@
-require "rails_helper"
+require 'rails_helper'
+# require 'application_system_test_case'
 
-RSpec.feature "Quote Editor", type: :system, js: true do
+RSpec.feature 'Quote Editor', type: :system, js: true do
   let!(:quote) { quotes(:first) }
 
-  scenario "Creating a new quote" do
-    # When we visit the Quotes#index page
-    # we expect to see a title with the text "Quotes"
+  # when we click on the 'New quote' button:
+  # - we expect a name text field to appear
+  # - we expect to be able to fill out the name text field with a quote
+  # - we expect to be able to save that quote after clicking 'Create quote'
+  # - we expect the quote to be visibly saved below all the other saved quotes
+
+  scenario 'Creating a new quote' do
     visit quotes_path
-    expect(page).to have_selector('h1', text: "Quotes")
+    expect(page).to have_selector('h1', text: 'Quotes')
 
-    # When we click on the link with the text "New quote"
-    # we expect to land on a page with the title "New quote"
-    click_on "New quote"
-    expect(page).to have_selector('h1', text: "New quote")
+    click_on('New quote')
+    expect(page).to have_current_path('/quotes')
 
-    # When we fill in the name input with "Capybara quote"
-    # and we click on "Create Quote"
-    fill_in "Name", with: "Capybara quote"
-    click_on "Create quote"
+    fill_in('Name', with: 'Test quote')
+    click_on('Create quote')
+    expect(page).to have_text('Test quote')
 
-    # We expect to be back on the page with the title "Quotes"
-    # and to see our "Capybara quote" added to the list
-    assert_selector "h1", text: "Quotes"
-    expect(page).to have_text("Capybara quote")
+    quotes_order = page.all('.quote a').map(&:text).reject { _1 == 'Edit' }
+    expect(quotes_order).to eq(
+      [['First quote', 'Second quote', 'Third quote', 'Test quote']]
+    )
   end
 
-  scenario "Showing a quote" do
+  scenario 'Showing a quote' do
     visit quotes_path
     click_link quote.name
 
-    expect(page).to have_selector("h1", text: quote.name)
+    expect(page).to have_selector('h1', text: quote.name)
   end
 
-  scenario "Updating a quote" do
+  # # when we click on the 'Edit quote' button:
+  # # - we expect a name text field to appear
+  # # - we expect to be able to fill out the name text field with a new quote
+  # # - we expect to be able to save that quote after clicking 'Update quote'
+  # # - we expect the quote to be saved with the new name in the same position
+
+  scenario 'Updating a quote' do
+    page.driver.debug(binding.irb)
     visit quotes_path
-    expect(page).to have_selector("h1", text: "Quotes")
+    expect(page).to have_selector('h1', text: 'Quotes')
 
-    click_on "Edit", match: :first
-    expect(page).to have_selector("h1", text: "Edit quote")
+    quote_to_edit = find(:css, 'div.quote', text: 'Second quote')
+    within(quote_to_edit) do
+      click_on('Edit')
+      expect(page).to have_current_path('/quotes')
 
-    fill_in "Name", with: "Updated quote"
-    click_on "Update quote"
+      fill_in('Name', with: 'Updated second quote')
+      expect(page).to have_text('Updated second quote')
+    end
 
-    expect(page).to have_selector("h1", text: "Quotes")
-    expect(page).to have_text("Updated quote")
+    quotes_order = page.all('.quote a').map(&:text).reject { _1 == 'Edit' }
+    expect(quotes_order).to eq(
+      [['First quote', 'Updated second quote', 'Third quote', 'Test quote']]
+    )
   end
 
-  scenario "Destroying a quote" do
+  scenario 'Destroying a quote' do
     visit quotes_path
     expect(page).to have_text(quote.name)
 
-    click_on "Delete", match: :first
+    click_on 'Delete', match: :first
     expect(page).to have_no_text(quote.name)
   end
 end
