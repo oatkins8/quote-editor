@@ -1,8 +1,11 @@
 first:
   name: First quote
+  id: 1
 
 second:
   name: Second quote
+  id: 2
 
 third:
   name: Third quote
+  id: 3

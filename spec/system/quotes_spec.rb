@@ -2,28 +2,32 @@ require 'rails_helper'
 # require 'application_system_test_case'
 
 RSpec.feature 'Quote Editor', type: :system, js: true do
-  let!(:quote) { quotes(:first) }
-
-  # when we click on the 'New quote' button:
-  # - we expect a name text field to appear
-  # - we expect to be able to fill out the name text field with a quote
-  # - we expect to be able to save that quote after clicking 'Create quote'
-  # - we expect the quote to be visibly saved below all the other saved quotes
+  let(:quote) { quotes.first }
 
   scenario 'Creating a new quote' do
     visit quotes_path
     expect(page).to have_selector('h1', text: 'Quotes')
-
     click_on('New quote')
+
+    # expect the form to be rendered in the #index view
     expect(page).to have_current_path('/quotes')
+
+    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
+    # epect the form to be appended to the top of the quotes list
+    expect(frame_order).to eq(
+      ['Name', 'Third quote', 'Second quote', 'First quote']
+    )
 
     fill_in('Name', with: 'Test quote')
     click_on('Create quote')
-    expect(page).to have_text('Test quote')
 
-    quotes_order = page.all('.quote a').map(&:text).reject { _1 == 'Edit' }
-    expect(quotes_order).to eq(
-      [['First quote', 'Second quote', 'Third quote', 'Test quote']]
+    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
+    # expect the first frame to be empty content (what we replace the form with after it has been submitted)
+    expect(frame_order.first).to eq('')
+
+    # expect the new quote to be prepended to the top of the list
+    expect(frame_order[1..]).to eq(
+      ['Test quote', 'Third quote', 'Second quote', 'First quote']
     )
   end
 
@@ -34,29 +38,31 @@ RSpec.feature 'Quote Editor', type: :system, js: true do
     expect(page).to have_selector('h1', text: quote.name)
   end
 
-  # # when we click on the 'Edit quote' button:
-  # # - we expect a name text field to appear
-  # # - we expect to be able to fill out the name text field with a new quote
-  # # - we expect to be able to save that quote after clicking 'Update quote'
-  # # - we expect the quote to be saved with the new name in the same position
-
   scenario 'Updating a quote' do
-    page.driver.debug(binding.irb)
     visit quotes_path
     expect(page).to have_selector('h1', text: 'Quotes')
 
-    quote_to_edit = find(:css, 'div.quote', text: 'Second quote')
+    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
+    expect(frame_order).to eq(
+      ['', 'Third quote', 'Second quote', 'First quote']
+    )
+
+    # quote_to_edit = find('turbo-frame a[data-turbo-frame="_top"][href="/quotes/2"]', text: 'Second quote')
+    quote_to_edit = find('#quote_2')
     within(quote_to_edit) do
       click_on('Edit')
+
+      # expect the form to be rendered in the #index view
       expect(page).to have_current_path('/quotes')
 
       fill_in('Name', with: 'Updated second quote')
-      expect(page).to have_text('Updated second quote')
+      click_on('Update quote')
     end
 
-    quotes_order = page.all('.quote a').map(&:text).reject { _1 == 'Edit' }
-    expect(quotes_order).to eq(
-      [['First quote', 'Updated second quote', 'Third quote', 'Test quote']]
+    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
+    # the order of the frames before the update should match the order after the update
+    expect(frame_order).to eq(
+      ['', 'Third quote', 'Updated second quote', 'First quote']
     )
   end
 
@@ -64,7 +70,11 @@ RSpec.feature 'Quote Editor', type: :system, js: true do
     visit quotes_path
     expect(page).to have_text(quote.name)
 
-    click_on 'Delete', match: :first
+    quote_to_delete = find("#quote_#{quote.id}")
+    within(quote_to_delete) do
+      click_on('Delete')
+    end
+
     expect(page).to have_no_text(quote.name)
   end
 end
