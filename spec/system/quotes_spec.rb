@@ -4,15 +4,18 @@ require 'rails_helper'
 RSpec.feature 'Quote Editor', type: :system, js: true do
   let(:quote) { quotes.first }
 
+  def frame_order
+    page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
+  end
+
   scenario 'Creating a new quote' do
     visit quotes_path
     expect(page).to have_selector('h1', text: 'Quotes')
     click_on('New quote')
 
     # expect the form to be rendered in the #index view
-    expect(page).to have_current_path('/quotes')
+    expect(page).to have_current_path(quotes_path)
 
-    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
     # epect the form to be appended to the top of the quotes list
     expect(frame_order).to eq(
       ['Name', 'Third quote', 'Second quote', 'First quote']
@@ -21,7 +24,6 @@ RSpec.feature 'Quote Editor', type: :system, js: true do
     fill_in('Name', with: 'Test quote')
     click_on('Create quote')
 
-    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
     # expect the first frame to be empty content (what we replace the form with after it has been submitted)
     expect(frame_order.first).to eq('')
 
@@ -42,27 +44,23 @@ RSpec.feature 'Quote Editor', type: :system, js: true do
     visit quotes_path
     expect(page).to have_selector('h1', text: 'Quotes')
 
-    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
     expect(frame_order).to eq(
       ['', 'Third quote', 'Second quote', 'First quote']
     )
 
-    # quote_to_edit = find('turbo-frame a[data-turbo-frame="_top"][href="/quotes/2"]', text: 'Second quote')
-    quote_to_edit = find('#quote_2')
-    within(quote_to_edit) do
+    within("#quote_#{quote.id}") do
       click_on('Edit')
 
       # expect the form to be rendered in the #index view
-      expect(page).to have_current_path('/quotes')
+      expect(page).to have_current_path(quotes_path)
 
-      fill_in('Name', with: 'Updated second quote')
+      fill_in('Name', with: 'Updated quote')
       click_on('Update quote')
     end
 
-    frame_order = page.all('turbo-frame').map(&:text).reject { _1.include?('Edit') }
     # the order of the frames before the update should match the order after the update
     expect(frame_order).to eq(
-      ['', 'Third quote', 'Updated second quote', 'First quote']
+      ['', 'Third quote', 'Second quote', 'Updated quote']
     )
   end
 
