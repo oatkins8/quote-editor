@@ -1,12 +1,21 @@
-<div class="quote">
-  <%= link_to quote.name, quote_path(quote) %>
-  <div class="quote__actions">
-    <%= button_to "Delete",
+<%= turbo_frame_tag quote do %>
+  <div class="quote">
+    <%= turbo_frame_tag @quote do %>
+      <%= link_to quote.name,
                   quote_path(quote),
-                  method: :delete,
+                  data: { turbo_frame: "_top" } %>
+    <% end %>
+
+    <div class="quote__actions">
+      <%= button_to "Delete",
+                    quote_path(quote),
+                    method: :delete,
+                    class: "btn btn--light",
+                    form: { data: { turbo_frame: "_top" } } %>
+      <%= link_to "Edit",
+                  edit_quote_path(quote),
                   class: "btn btn--light" %>
-    <%= link_to "Edit",
-                edit_quote_path(quote),
-                class: "btn btn--light" %>
+    </div>
   </div>
-</div>
+<% end %>
+
