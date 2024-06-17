@@ -1,0 +1,11 @@
+barista:
+  email: barista@pret.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+
+manager:
+  email: manager@pret.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+
+eavesdropper:
+  email: eavesdropper@cos.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
