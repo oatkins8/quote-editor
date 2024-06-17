@@ -1,11 +1,14 @@
 first:
-  name: First quote
+  company: pret
+  name: we burn our coffee to give it a distinctive taste 
   id: 1
 
 second:
-  name: Second quote
+  company: pret
+  name: this makes it taste like coffee to people who don't like coffee
   id: 2
 
 third:
-  name: Third quote
+  company: pret
+  name: to people who like coffee, it tastes like balls
   id: 3
