@@ -7,4 +7,4 @@ test:
   port: 5432
   username: postgres
   password: postgres
-  database: rails_testing_test
+  database: quote_editor_test

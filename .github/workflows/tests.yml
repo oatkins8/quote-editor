@@ -49,7 +49,12 @@ jobs:
           cp config/database.github.yml config/database.yml
           bin/rails db:setup
 
-      - name: Run tests
+      - name: Precompile assets
+        env:
+          RAILS_ENV: test
         run: |
           bundle exec rake assets:precompile
+
+      - name: Run tests
+        run: |
           bundle exec rspec
